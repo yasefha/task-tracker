@@ -1,5 +1,7 @@
-package main
+package repository
+
+import "task-tracker/domain"
 
 type TaskRepository interface {
-	Save(task Task) error
+	Save(task domain.Task) error
 }
