@@ -1,27 +1,29 @@
-package main
+package service
 
 import (
 	"strings"
+	"task-tracker/domain"
+	"task-tracker/repository/file_repo"
 	"time"
 )
 
-func AddTask(repo TaskRepository, description string) (task Task, err error) {
+func AddTask(repo file_repo.FileRepo, description string) (task domain.Task, err error) {
 	if strings.TrimSpace(description) == "" {
-		return task, EmptyDescriptionError{}
+		return task, domain.EmptyDescriptionError{}
 	}
 
-	task = Task{
+	task = domain.Task{
 		ID:          0, //nanti id yg bener di Save()
 		Description: description,
-		Status:      StatusTodo,
+		Status:      domain.StatusTodo,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
 
-	err = repo.Save(task)
+	task, err = repo.SaveTask(task)
 
 	if err != nil {
-		return Task{}, UnableToSaveError{}
+		return domain.Task{}, domain.UnableToSaveError{Cause: err}
 	} else {
 		return task, nil
 	}

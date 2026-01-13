@@ -1,4 +1,4 @@
-package file
+package file_repo
 
 import (
 	"encoding/json"
@@ -45,10 +45,10 @@ func saveState(state taskFileState, repo *FileRepo) error {
 	return nil
 }
 
-func (repo *FileRepo) Save(task domain.Task) error {
+func (repo *FileRepo) SaveTask(task domain.Task) (domain.Task, error) {
 	state, err := loadState(repo)
 	if err != nil {
-		return err
+		return domain.Task{}, err
 	}
 
 	state.LastID++
@@ -57,8 +57,8 @@ func (repo *FileRepo) Save(task domain.Task) error {
 
 	err = saveState(state, repo)
 	if err != nil {
-		return err
+		return domain.Task{}, err
 	}
 
-	return nil
+	return task, nil
 }

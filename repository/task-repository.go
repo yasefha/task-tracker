@@ -3,5 +3,5 @@ package repository
 import "task-tracker/domain"
 
 type TaskRepository interface {
-	Save(task domain.Task) error
+	SaveTask(task domain.Task) (domain.Task, error)
 }
