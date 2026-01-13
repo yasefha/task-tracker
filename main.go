@@ -11,11 +11,12 @@ func main() {
 	repo := file_repo.FileRepo{}
 	repo.Dir = "data/tasks.json"
 
-	args := os.Args
+	app := cli.NewApp(&repo)
 
-	err := cli.Run(args, repo)
+	args := os.Args
+	err := app.Run(args)
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
+		// os.Exit(1)
 	}
 }

@@ -62,3 +62,27 @@ func (repo *FileRepo) SaveTask(task domain.Task) (domain.Task, error) {
 
 	return task, nil
 }
+
+func (repo *FileRepo) ListTask(status *domain.TaskStatus) (tasks []domain.Task, err error) {
+	state, err := loadState(repo)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(state.Tasks) == 0 {
+		return nil, domain.EmptyTaskError{}
+	}
+
+	if status == nil {
+		return state.Tasks, nil
+	}
+
+	var filtered []domain.Task
+	for _, task := range state.Tasks {
+		if task.Status == *status {
+			filtered = append(filtered, task)
+		}
+	}
+
+	return filtered, nil
+}

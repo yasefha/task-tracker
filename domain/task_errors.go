@@ -13,3 +13,15 @@ type UnableToSaveError struct {
 func (e UnableToSaveError) Error() string {
 	return "unable to save task"
 }
+
+type EmptyTaskError struct{}
+
+func (e EmptyTaskError) Error() string {
+	return "No tasks found. Add a task using \"task add <description>\"."
+}
+
+type InvalidCommandError struct{}
+
+func (e InvalidCommandError) Error() string {
+	return "Command is invalid. See \"task help\" for more information."
+}

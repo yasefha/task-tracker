@@ -3,11 +3,11 @@ package service
 import (
 	"strings"
 	"task-tracker/domain"
-	"task-tracker/repository/file_repo"
+	"task-tracker/repository"
 	"time"
 )
 
-func AddTask(repo file_repo.FileRepo, description string) (task domain.Task, err error) {
+func AddTask(repo repository.TaskRepository, description string) (task domain.Task, err error) {
 	if strings.TrimSpace(description) == "" {
 		return task, domain.EmptyDescriptionError{}
 	}
@@ -27,4 +27,8 @@ func AddTask(repo file_repo.FileRepo, description string) (task domain.Task, err
 	} else {
 		return task, nil
 	}
+}
+
+func ListTask(repo repository.TaskRepository, status *domain.TaskStatus) ([]domain.Task, error) {
+	return repo.ListTask(status)
 }

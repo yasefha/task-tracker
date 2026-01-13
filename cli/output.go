@@ -39,3 +39,14 @@ func PrintAddSuccess(task domain.Task) {
 	fmt.Println("[SUCC] Task added (ID:", view.ID, ")")
 	fmt.Println(view.String())
 }
+
+func PrintTasksList(tasks []domain.Task) {
+	fmt.Println("TASKS LIST")
+
+	for _, task := range tasks {
+		view := TaskView(task)
+		fmt.Println("ID:", view.ID)
+		fmt.Println(view.String())
+		fmt.Println("\n")
+	}
+}
