@@ -15,7 +15,7 @@ Download the latest Windows binary from GitHub and place it in a folder in your 
 
 ### Download task.exe to user bin folder
 ```powershell
-Invoke-WebRequest -Uri "https://github.com/yasefhatam/task-tracker/releases/latest/download/task.exe" -OutFile "$env:USERPROFILE\bin\task.exe"
+Invoke-WebRequest -Uri "https://github.com/yasefha/task-tracker/releases/latest/download/task.exe" -OutFile "$env:USERPROFILE\bin\task.exe"
 ```
 ### Add folder to PATH (temporary for current session)
 ```powershell
