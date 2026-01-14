@@ -1,3 +1,3 @@
-module task-tracker
+module github.com/yasefha/task-tracker
 
-go 1.25.5
+go 1.0

@@ -2,9 +2,10 @@ package service
 
 import (
 	"strings"
-	"task-tracker/domain"
-	"task-tracker/repository"
 	"time"
+
+	"github.com/yasefha/task-tracker/domain"
+	"github.com/yasefha/task-tracker/repository"
 )
 
 func AddTask(repo repository.TaskRepository, description string) (task domain.Task, err error) {

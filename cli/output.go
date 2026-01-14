@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"task-tracker/domain"
+
+	"github.com/yasefha/task-tracker/domain"
 )
 
 func printSeparator() {

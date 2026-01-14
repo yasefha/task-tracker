@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"task-tracker/cli"
-	"task-tracker/repository/file_repo"
+
+	"github.com/yasefha/task-tracker/cli"
+	"github.com/yasefha/task-tracker/repository/file_repo"
 )
 
 func main() {

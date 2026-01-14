@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"task-tracker/domain"
-	"task-tracker/repository"
-	"task-tracker/service"
+
+	"github.com/yasefha/task-tracker/domain"
+	"github.com/yasefha/task-tracker/repository"
+	"github.com/yasefha/task-tracker/service"
 )
 
 type App struct {
