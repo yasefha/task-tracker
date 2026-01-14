@@ -25,3 +25,9 @@ type InvalidCommandError struct{}
 func (e InvalidCommandError) Error() string {
 	return "Command is invalid. See \"task help\" for more information."
 }
+
+type TaskNotFoundError struct{}
+
+func (e TaskNotFoundError) Error() string {
+	return e.Error()
+}

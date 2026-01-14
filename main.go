@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	repo := file_repo.FileRepo{}
+	repo := &file_repo.FileRepo{}
 	repo.Dir = "data/tasks.json"
 
-	app := cli.NewApp(&repo)
+	app := cli.NewApp(repo)
 
 	args := os.Args
 	err := app.Run(args)

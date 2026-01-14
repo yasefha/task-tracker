@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"task-tracker/domain"
 	"task-tracker/repository"
@@ -27,6 +28,12 @@ func (a *App) Run(args []string) error {
 		return handleAdd(args[2:], a.repo)
 	case "list":
 		return hadleList(args[2:], a.repo)
+	case "update-status":
+		return handleUpdateStatus(args[2:], a.repo)
+	case "update-desc":
+		return handleUpdateDescription(args[2:], a.repo)
+	case "delete":
+		return handleDelete(args[2:], a.repo)
 	default:
 		return domain.InvalidCommandError{}
 	}
@@ -64,7 +71,7 @@ func parseStatus(arg string) (domain.TaskStatus, error) {
 }
 
 func hadleList(args []string, repo repository.TaskRepository) error {
-	var status *domain.TaskStatus
+	var status domain.TaskStatus
 
 	if len(args) > 1 {
 		return domain.InvalidCommandError{}
@@ -75,7 +82,7 @@ func hadleList(args []string, repo repository.TaskRepository) error {
 		if err != nil {
 			return err
 		}
-		status = &s
+		status = s
 	}
 
 	var tasks []domain.Task
@@ -85,10 +92,82 @@ func hadleList(args []string, repo repository.TaskRepository) error {
 	}
 
 	if len(tasks) == 0 {
-		return fmt.Errorf("No tasks found with status \"%s\".", *status)
+		return fmt.Errorf("No tasks found with status \"%s\".", status)
 	}
 
 	PrintTasksList(tasks)
+
+	return nil
+}
+
+func handleUpdateStatus(args []string, repo repository.TaskRepository) error {
+	if len(args) > 2 {
+		return domain.InvalidCommandError{}
+	}
+
+	ID, err := strconv.Atoi(args[0])
+	if err != nil {
+		return err
+	}
+
+	s, err := parseStatus(args[1])
+	if err != nil {
+		return err
+	}
+
+	task, err := service.UpdateStatus(repo, ID, s)
+
+	if errors.Is(err, domain.TaskNotFoundError{}) {
+		fmt.Println("[FAIL] No task found with ID", ID)
+	} else {
+		PrintUpdateSuccess(task)
+	}
+
+	return nil
+}
+
+func handleUpdateDescription(args []string, repo repository.TaskRepository) error {
+	if len(args) < 1 {
+		return domain.InvalidCommandError{}
+	}
+
+	if len(args) < 2 {
+		return domain.EmptyDescriptionError{}
+	}
+
+	ID, err := strconv.Atoi(args[0])
+	if err != nil {
+		return err
+	}
+
+	desc := strings.Join(args[1:], " ")
+
+	task, err := service.UpdateDescription(repo, ID, desc)
+	if errors.Is(err, domain.TaskNotFoundError{}) {
+		fmt.Println("[FAIL] No task found with ID", ID)
+	} else {
+		PrintUpdateSuccess(task)
+	}
+
+	return nil
+}
+
+func handleDelete(args []string, repo repository.TaskRepository) error {
+	if len(args) < 1 || len(args) > 1 {
+		return domain.InvalidCommandError{}
+	}
+
+	ID, err := strconv.Atoi(args[0])
+	if err != nil {
+		return err
+	}
+
+	task, err := service.DeleteTaskByID(repo, ID)
+	if errors.Is(err, domain.TaskNotFoundError{}) {
+		fmt.Println("[FAIL] No task found with ID", ID)
+	} else {
+		PrintDeleteSuccess(task)
+	}
 
 	return nil
 }

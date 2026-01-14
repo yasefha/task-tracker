@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"task-tracker/domain"
+	"time"
 )
 
 type FileRepo struct {
@@ -63,7 +64,7 @@ func (repo *FileRepo) SaveTask(task domain.Task) (domain.Task, error) {
 	return task, nil
 }
 
-func (repo *FileRepo) ListTask(status *domain.TaskStatus) (tasks []domain.Task, err error) {
+func (repo *FileRepo) ListTask(status domain.TaskStatus) (tasks []domain.Task, err error) {
 	state, err := loadState(repo)
 	if err != nil {
 		return nil, err
@@ -73,16 +74,81 @@ func (repo *FileRepo) ListTask(status *domain.TaskStatus) (tasks []domain.Task, 
 		return nil, domain.EmptyTaskError{}
 	}
 
-	if status == nil {
+	if status == "" {
 		return state.Tasks, nil
 	}
 
 	var filtered []domain.Task
 	for _, task := range state.Tasks {
-		if task.Status == *status {
+		if task.Status == status {
 			filtered = append(filtered, task)
 		}
 	}
 
 	return filtered, nil
+}
+
+func (repo *FileRepo) UpdateTaskStatus(status domain.TaskStatus, ID int) (domain.Task, error) {
+	state, err := loadState(repo)
+	if err != nil {
+		return domain.Task{}, err
+	}
+
+	for i := range state.Tasks {
+		if state.Tasks[i].ID == ID {
+			state.Tasks[i].Status = status
+			state.Tasks[i].UpdatedAt = time.Now()
+
+			if err := saveState(state, repo); err != nil {
+				return domain.Task{}, err
+			}
+
+			return state.Tasks[i], nil
+		}
+	}
+
+	return domain.Task{}, domain.TaskNotFoundError{}
+}
+
+func (repo *FileRepo) UpdateTaskDescription(description string, ID int) (domain.Task, error) {
+	state, err := loadState(repo)
+	if err != nil {
+		return domain.Task{}, err
+	}
+
+	for i := range state.Tasks {
+		if state.Tasks[i].ID == ID {
+			state.Tasks[i].Description = description
+			state.Tasks[i].UpdatedAt = time.Now()
+
+			if err := saveState(state, repo); err != nil {
+				return domain.Task{}, err
+			}
+
+			return state.Tasks[i], nil
+		}
+	}
+
+	return domain.Task{}, domain.TaskNotFoundError{}
+}
+
+func (repo *FileRepo) DeleteTask(ID int) (domain.Task, error) {
+	state, err := loadState(repo)
+	if err != nil {
+		return domain.Task{}, err
+	}
+
+	for i := range state.Tasks {
+		if state.Tasks[i].ID == ID {
+			deletedTask := state.Tasks[i]
+
+			state.Tasks = append(state.Tasks[:i], state.Tasks[i+1:]...)
+			if err := saveState(state, repo); err != nil {
+				return domain.Task{}, err
+			}
+
+			return deletedTask, nil
+		}
+	}
+	return domain.Task{}, domain.TaskNotFoundError{}
 }

@@ -47,6 +47,19 @@ func PrintTasksList(tasks []domain.Task) {
 		view := TaskView(task)
 		fmt.Println("ID:", view.ID)
 		fmt.Println(view.String())
-		fmt.Println("\n")
 	}
+}
+
+func PrintUpdateSuccess(task domain.Task) {
+	view := TaskView(task)
+
+	fmt.Println("[SUCC] Task updated (ID:", view.ID, ")")
+	fmt.Println(view.String())
+}
+
+func PrintDeleteSuccess(task domain.Task) {
+	view := TaskView(task)
+
+	fmt.Println("[SUCC] Task deleted (ID: ", view.ID, ")")
+	fmt.Println(view.String())
 }

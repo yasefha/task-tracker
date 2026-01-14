@@ -29,6 +29,22 @@ func AddTask(repo repository.TaskRepository, description string) (task domain.Ta
 	}
 }
 
-func ListTask(repo repository.TaskRepository, status *domain.TaskStatus) ([]domain.Task, error) {
+func ListTask(repo repository.TaskRepository, status domain.TaskStatus) ([]domain.Task, error) {
 	return repo.ListTask(status)
+}
+
+func UpdateStatus(repo repository.TaskRepository, ID int, status domain.TaskStatus) (domain.Task, error) {
+	return repo.UpdateTaskStatus(status, ID)
+}
+
+func UpdateDescription(repo repository.TaskRepository, ID int, description string) (domain.Task, error) {
+	if strings.TrimSpace(description) == "" {
+		return domain.Task{}, domain.EmptyDescriptionError{}
+	}
+
+	return repo.UpdateTaskDescription(description, ID)
+}
+
+func DeleteTaskByID(repo repository.TaskRepository, ID int) (domain.Task, error) {
+	return repo.DeleteTask(ID)
 }
