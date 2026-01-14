@@ -40,7 +40,7 @@ func (t TaskOutput) String() string {
 func PrintAddSuccess(task domain.Task) {
 	view := TaskView(task)
 
-	fmt.Printf("[SUCCESS] Task added (ID: %d) \n", view.ID)
+	fmt.Println(green("[SUCCESS]"), "Task added , (", cyan("ID"), ":", fmt.Sprint(view.ID))
 	printSeparator()
 	fmt.Println(view.String())
 	printSeparator()
@@ -53,7 +53,7 @@ func PrintTasksList(tasks []domain.Task) {
 
 	for _, task := range tasks {
 		view := TaskView(task)
-		fmt.Println("ID:", view.ID)
+		fmt.Println(cyan("ID:"), fmt.Sprint(view.ID))
 		printSeparator()
 		fmt.Println(view.String())
 		printSeparator()
@@ -63,7 +63,7 @@ func PrintTasksList(tasks []domain.Task) {
 func PrintUpdateSuccess(task domain.Task) {
 	view := TaskView(task)
 
-	fmt.Printf("[SUCCESS] Task updated (ID: %d) \n", view.ID)
+	fmt.Println(green("[SUCCESS]"), "Task updated , (", cyan("ID"), ":", fmt.Sprint(view.ID))
 	printSeparator()
 	fmt.Println(view.String())
 	printSeparator()
@@ -72,73 +72,63 @@ func PrintUpdateSuccess(task domain.Task) {
 func PrintDeleteSuccess(task domain.Task) {
 	view := TaskView(task)
 
-	fmt.Printf("[SUCCESS] Task deleted (ID: %d) \n", view.ID)
+	fmt.Println(green("[SUCCESS]"), "Task deleted , (", cyan("ID"), ":", fmt.Sprint(view.ID))
 	printSeparator()
 	fmt.Println(view.String())
 	printSeparator()
 }
 
 func PrintHelp() {
-	fmt.Println(`════════════════════════════════════════
-            TASK TRACKER CLI
-════════════════════════════════════════
+	fmt.Println("════════════════════════════════════════")
+	fmt.Println(bold(green("	   TASKS TRACKER CLI    ")))
+	fmt.Println("════════════════════════════════════════")
+	fmt.Println()
 
-USAGE
-────────────────────────────────────────
-  task <command> [arguments]
+	fmt.Println(bold("USAGE"))
+	printSeparator()
+	fmt.Println(`task <command> [arguments]`)
+	fmt.Println()
 
+	fmt.Println()
+	fmt.Println(bold("COMMANDS"))
+	printSeparator()
+	fmt.Println("Add a new task:", bold(cyan("add")), magenta("<description>\n"))
+	fmt.Println("List tasks: ", bold(cyan("list")), magenta("[status]"))
+	fmt.Println("If no status is provided, all tasks will be shown.")
+	fmt.Println("Status options: todo | in-progress | done\n")
+	fmt.Println("Update task status: ", bold(cyan("update-status")), magenta("[ID]"), magenta("[status]\n"))
+	fmt.Println("Update task description: ", bold(cyan("update-description")), magenta("[ID]"), magenta("<description>\n"))
+	fmt.Println("Delete a task by ID:", bold(cyan("delete")), magenta("[ID]\n"))
+	fmt.Println("Delete all tasks permanently:", bold(cyan("reset")), gray("[--confirm]"))
+	fmt.Println()
 
-COMMANDS
-────────────────────────────────────────
-  add <description>
-      Add a new task
-
-  list [status]
-      List tasks.
-      If no status is provided, all tasks will be shown.
-      Status options: todo | in-progress | done
-
-  update-status <id> <status>
-      Update task status
-
-  update-desc <id> <description>
-      Update task description
-
-  delete <id>
-      Delete a task by ID
-
-  reset [--confirm]
-      Delete all tasks permanently
-
-
-EXAMPLES
-────────────────────────────────────────
-  task add "Buy milk"
-  task list
-  task list todo
-  task update-status 1 done
-  task update-desc 2 "Fix bug"
-  task delete 3
-  task reset --confirm
-
-════════════════════════════════════════
-`)
+	fmt.Println()
+	fmt.Println(bold("EXAMPLES"))
+	printSeparator()
+	fmt.Println(bold(green("task")), cyan("add"), magenta("\"Buy milk\""))
+	fmt.Println(bold(green("task")), cyan("list"), magenta("todo"))
+	fmt.Println(bold(green("task")), cyan("updaye-desc"), magenta("2"), magenta("\"Fix bug\""))
+	fmt.Println(bold(green("task")), cyan("delete"), magenta("3"))
+	fmt.Println(bold(green("task")), cyan("reset"), gray("--confirm"))
+	fmt.Println()
+	fmt.Println("════════════════════════════════════════")
 }
 
 func printWelcome() {
-	fmt.Println(`════════════════════════════════════════
-            TASK TRACKER
-             by Yasef Hatam
-════════════════════════════════════════
+	fmt.Println("════════════════════════════════════════")
+	fmt.Println(bold(blue("             TASK TRACKER             ")))
+	fmt.Println("            by Yasef Hatam            ")
+	fmt.Println("════════════════════════════════════════")
+	fmt.Println()
 
-A simple command-line tool to help you
+	fmt.Println(`A simple command-line tool to help you
 manage your daily tasks efficiently.
 
 You can add, list, update, and delete tasks
-directly from your terminal.
+directly from your terminal.`)
+	printSeparator()
 
-────────────────────────────────────────
-Type "task help" to see available commands
-════════════════════════════════════════
-`)
+	fmt.Println()
+	fmt.Println("Type", cyan("\"task help\""), "to see available commands.")
+	fmt.Println("════════════════════════════════════════")
 }
