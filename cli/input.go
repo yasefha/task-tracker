@@ -190,7 +190,7 @@ func handleDelete(args []string, repo repository.TaskRepository) error {
 
 func handleReset(args []string, repo repository.TaskRepository) error {
 	if len(args) == 0 {
-		fmt.Println("[WARNING] This will delete ALL tasks permanently.")
+		fmt.Println(yellow("[WARNING]"), "This will delete ALL tasks permanently.")
 		fmt.Println("To confirm, run: task reset --confirm")
 		return nil
 	}
