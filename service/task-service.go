@@ -48,3 +48,7 @@ func UpdateDescription(repo repository.TaskRepository, ID int, description strin
 func DeleteTaskByID(repo repository.TaskRepository, ID int) (domain.Task, error) {
 	return repo.DeleteTask(ID)
 }
+
+func DeleteAllTask(repo repository.TaskRepository) error {
+	return repo.DeleteAllTask()
+}

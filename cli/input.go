@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"strings"
 	"task-tracker/domain"
 	"task-tracker/repository"
 	"task-tracker/service"
@@ -20,37 +19,47 @@ func NewApp(repo repository.TaskRepository) *App {
 
 func (a *App) Run(args []string) error {
 	if len(args) < 2 {
-		return errors.New("error")
+		printWelcome()
+		return nil
 	}
 
 	switch args[1] {
 	case "add":
 		return handleAdd(args[2:], a.repo)
 	case "list":
-		return hadleList(args[2:], a.repo)
+		return handleList(args[2:], a.repo)
 	case "update-status":
 		return handleUpdateStatus(args[2:], a.repo)
 	case "update-desc":
 		return handleUpdateDescription(args[2:], a.repo)
 	case "delete":
 		return handleDelete(args[2:], a.repo)
+	case "reset":
+		return handleReset(args[2:], a.repo)
+	case "help":
+		return handleHelp()
 	default:
 		return domain.InvalidCommandError{}
 	}
 }
 
 func handleAdd(args []string, repo repository.TaskRepository) error {
-	if len(args) == 0 {
+	if len(args) < 1 {
 		fmt.Println("[FAIL] Task not saved.")
-		return errors.New("Description is required.")
+		return domain.EmptyDescriptionError{}
 	}
 
-	description := strings.Join(args, " ")
+	if len(args) != 1 {
+		fmt.Println("[FAIL] Task not saved.")
+		return errors.New("Description must be provided as a single argument. \"<description>\".")
+	}
+
+	description := args[0]
 
 	task, err := service.AddTask(repo, description)
 	if err != nil {
 		fmt.Println("[FAIL] Task not saved.")
-		return err
+		return domain.UnableToSaveError{Cause: err}
 	}
 
 	PrintAddSuccess(task)
@@ -66,11 +75,11 @@ func parseStatus(arg string) (domain.TaskStatus, error) {
 	case "done":
 		return domain.StatusDone, nil
 	default:
-		return "", errors.New("invalid status")
+		return "", errors.New("Invalid status")
 	}
 }
 
-func hadleList(args []string, repo repository.TaskRepository) error {
+func handleList(args []string, repo repository.TaskRepository) error {
 	var status domain.TaskStatus
 
 	if len(args) > 1 {
@@ -102,6 +111,7 @@ func hadleList(args []string, repo repository.TaskRepository) error {
 
 func handleUpdateStatus(args []string, repo repository.TaskRepository) error {
 	if len(args) > 2 {
+		fmt.Println("[FAIL] Task not updated.")
 		return domain.InvalidCommandError{}
 	}
 
@@ -112,6 +122,7 @@ func handleUpdateStatus(args []string, repo repository.TaskRepository) error {
 
 	s, err := parseStatus(args[1])
 	if err != nil {
+		fmt.Println("[FAIL] Task not updated.")
 		return err
 	}
 
@@ -119,6 +130,7 @@ func handleUpdateStatus(args []string, repo repository.TaskRepository) error {
 
 	if errors.Is(err, domain.TaskNotFoundError{}) {
 		fmt.Println("[FAIL] No task found with ID", ID)
+		return err
 	} else {
 		PrintUpdateSuccess(task)
 	}
@@ -128,11 +140,13 @@ func handleUpdateStatus(args []string, repo repository.TaskRepository) error {
 
 func handleUpdateDescription(args []string, repo repository.TaskRepository) error {
 	if len(args) < 1 {
-		return domain.InvalidCommandError{}
+		fmt.Println("[FAIL] Task not updated.")
+		return domain.EmptyDescriptionError{}
 	}
 
-	if len(args) < 2 {
-		return domain.EmptyDescriptionError{}
+	if len(args) != 1 {
+		fmt.Println("[FAIL] Task not updated.")
+		return errors.New("Description must be provided as a single argument. \"<description>\".")
 	}
 
 	ID, err := strconv.Atoi(args[0])
@@ -140,11 +154,12 @@ func handleUpdateDescription(args []string, repo repository.TaskRepository) erro
 		return err
 	}
 
-	desc := strings.Join(args[1:], " ")
+	desc := args[0]
 
 	task, err := service.UpdateDescription(repo, ID, desc)
 	if errors.Is(err, domain.TaskNotFoundError{}) {
 		fmt.Println("[FAIL] No task found with ID", ID)
+		return err
 	} else {
 		PrintUpdateSuccess(task)
 	}
@@ -165,9 +180,35 @@ func handleDelete(args []string, repo repository.TaskRepository) error {
 	task, err := service.DeleteTaskByID(repo, ID)
 	if errors.Is(err, domain.TaskNotFoundError{}) {
 		fmt.Println("[FAIL] No task found with ID", ID)
+		return err
 	} else {
 		PrintDeleteSuccess(task)
 	}
 
+	return nil
+}
+
+func handleReset(args []string, repo repository.TaskRepository) error {
+	if len(args) == 0 {
+		fmt.Println("[WARNING] This will delete ALL tasks permanently.")
+		fmt.Println("To confirm, run: task reset --confirm")
+		return nil
+	}
+
+	if len(args) != 1 || args[0] != "--confirm" {
+		return errors.New("Invalid option. use --confirm to proceed.")
+	}
+
+	err := service.DeleteAllTask(repo)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("[SUCCESS] All tasks deleted.")
+	return nil
+}
+
+func handleHelp() error {
+	PrintHelp()
 	return nil
 }

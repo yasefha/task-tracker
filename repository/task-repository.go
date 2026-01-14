@@ -8,4 +8,5 @@ type TaskRepository interface {
 	UpdateTaskStatus(status domain.TaskStatus, ID int) (domain.Task, error)
 	UpdateTaskDescription(description string, ID int) (domain.Task, error)
 	DeleteTask(ID int) (domain.Task, error)
+	DeleteAllTask() error
 }

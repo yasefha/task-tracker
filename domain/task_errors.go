@@ -17,7 +17,7 @@ func (e UnableToSaveError) Error() string {
 type EmptyTaskError struct{}
 
 func (e EmptyTaskError) Error() string {
-	return "No tasks found. Add a task using \"task add <description>\"."
+	return "No tasks found. Add a task using \"task add \"<description>\"\"."
 }
 
 type InvalidCommandError struct{}

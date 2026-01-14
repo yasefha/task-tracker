@@ -152,3 +152,12 @@ func (repo *FileRepo) DeleteTask(ID int) (domain.Task, error) {
 	}
 	return domain.Task{}, domain.TaskNotFoundError{}
 }
+
+func (repo *FileRepo) DeleteAllTask() error {
+	state := taskFileState{
+		LastID: 0,
+		Tasks:  nil,
+	}
+
+	return saveState(state, repo)
+}
